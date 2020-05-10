@@ -1,16 +1,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "fs.h"
+#include "../fs/fs.h"
 
-void ls(char* path) {
+char* ls(char* path, size_t* ressize) {
     size_t indx = find_file(path);
     size_t size = get_inode(indx)->size_of_file;
     dir_record* files = read_file(indx);
+
+    char* buf = malloc(sizeof(char));
+    buf[0] = 0;
+    size_t bufsize = 1;
+
     for (int i = 0; i < size / sizeof(dir_record); ++i) {
-        printf("%s\n", files[i].name);
+        bufsize += strlen(files[i].name) + 1;
+        buf = realloc(buf, bufsize);
+        strcat(buf, files[i].name);
+        strcat(buf, "\n");
     }
     free(files);
+    if (ressize) {
+        *ressize = bufsize;
+    }
+    return buf;
 }
 
 void mkdir(char* path, char* name) {
@@ -23,17 +35,21 @@ void create(char* path, char* name, void* file, size_t size) {
     create_file(file, size, name, parent_indx, TEXT);
 }
 
-void cat_impl(char* path, FILE* out) {
+void cat_impl(char* path, FILE* out, char** buf) {
     size_t indx = find_file(path);
     char* text = read_file(indx);
     text[get_inode(indx)->size_of_file] = 0;
-    fputs(text, out);
-    printf("\n");
-    free(text);
+    if (out) {
+        fputs(text, out);
+        printf("\n");
+        free(text);
+    } else {
+        *buf = text;
+    }
 }
 
 void cat(char* path) {
-    cat_impl(path, stdout);
+    cat_impl(path, stdout, NULL);
 }
 
 int get_last_delim(const char* path) {
@@ -62,7 +78,7 @@ void rm(char* path) {
     remove_impl(path, DIR);
 }
 
-void rmdir(char* path) {
+void mrmdir(char* path) {
     remove_impl(path, TEXT);
 }
 
@@ -91,6 +107,12 @@ void put(char* file_name, char* new_path) {
 
 void get(char* out_file, char* path) {
     FILE* out = fopen(out_file, "w");
-    cat_impl(path, out);
+    cat_impl(path, out, NULL);
     fclose(out);
+}
+
+char* cat_remote(char* path) {
+    char* buf;
+    cat_impl(path, NULL, &buf);
+    return buf;
 }

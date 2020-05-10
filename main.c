@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "fs.h"
 #include "utils.h"
 
@@ -45,7 +46,9 @@ int main(int argc, char* argv[]) {
         if (strcmp(command, "ls") == 0) {
             char path[100];
             scanf("%s", path);
-            ls(path);
+            char* list = ls(path, NULL);
+            printf("%s", list);
+            free(list);
         }
         if (strcmp(command, "rm") == 0) {
             char path[100];
@@ -55,7 +58,7 @@ int main(int argc, char* argv[]) {
         if (strcmp(command, "rmdir") == 0) {
             char path[100];
             scanf("%s", path);
-            rmdir(path);
+            mrmdir(path);
         }
         if (strcmp(command, "put") == 0) {
             char file[100];

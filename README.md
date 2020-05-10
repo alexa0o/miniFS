@@ -1,5 +1,6 @@
 ## MiniFS
-Just a simple implementation of i-node file system.  
+Just a simple implementation of i-node file system. Also there are client-server
+app and server is a daemon.   
 List of commands:
 1. ``create root/path_to_new_file new_file_name CONTENT``  
 2. ``cat root/path_to_file``  
