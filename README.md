@@ -1,4 +1,5 @@
 ## MiniFS
+![](https://travis-ci.org/alexa0o/miniFS.svg?branch=master)  
 Just a simple implementation of i-node file system. Also there are client-server
 app and server is a daemon.   
 List of commands:
