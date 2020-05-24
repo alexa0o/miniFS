@@ -1,0 +1,20 @@
+dist: bionic
+sudo: required
+
+language: c
+
+os:
+  - linux
+
+compiler:
+  - gcc
+
+env:
+  - TARGET_CPU=amd64 BUILD_CONFIGURATION=Debug
+
+script:
+  - mkdir build
+  - cd build
+  - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION -DTARGET_CPU=$TARGET_CPU
+  - cmake --build .
+  - ctest --output-no-failure
